@@ -44,6 +44,12 @@
         });
     }
 
+    // [min, max) 
+    // This is how it is in combat.js
+    function randomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
     function viewDankMonsterDrops(monsterID) {
         /* ORIGINAL CODE located in banks.js */
 
@@ -55,13 +61,24 @@
         const monster = MONSTERS[monsterID];
 
         if (monsterID >= 0 && monster.lootTable !== undefined) {
-            const bones = items[monster.bones];
+            let html = '';
             const lootChance = (monster.lootChance || 100) / 100;  // lootChance is a percentage initially
 
-            let html = 'Always Drops:<br>';
-            html += `<small><img class="skill-icon-xs mr-2" src="${bones.media}">${bones.name}</small><br>`
-            html += '<br>'
-            html += `Possible Extra Drops (${lootChance * 100}%):<small><br>`
+            if (monster.bones !== null || monster.dropCoins !== null) {
+                html += 'Always Drops:<br>';
+
+                if (monster.bones !== null) {
+                    const bones = items[monster.bones];
+                    html += `<small><img class="skill-icon-xs mr-2" src="${bones.media}">${bones.name}</small><br>`;
+                }
+                if (monster.dropCoins !== null) {
+                    const gold = randomNumber(monster.dropCoins[0], monster.dropCoins[1]);
+                    const goldMedia = "assets/media/main/coins.svg";
+                    html += `<small><img class="skill-icon-xs mr-2" src="${goldMedia}">${monster.dropCoins[0]} - ${monster.dropCoins[1]} GP</small><br>`;
+                }
+            }
+
+            html += `<br>Possible Extra Drops (${lootChance * 100}%):<small><br>`
 
             // For some reason, the lootTable entries are arrays, map them into objects.
             const drops = monster.lootTable.map(([itemID, weight, quantity, ...rest]) => ({itemID, weight, quantity}));
