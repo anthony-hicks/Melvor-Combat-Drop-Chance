@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Melvor CombatDropChance
 // @namespace     http://tampermonkey.net
-// @version       0.3
+// @version       0.4
 // @description   Displays percentage drop chance for monsters and chests on inspect. Accounts for monster loot table chance.
 // @author        The Dream #4219
 // @match         https://*.melvoridle.com/*
@@ -18,6 +18,10 @@
     console.log('Melvor Combat Drop Chance Loaded.');
 
     function viewDankItemContents(itemID) {
+        if (itemID === null || itemID === -1) {
+            itemID = selectedBankItem;
+        }
+      
         let html = 'Possible Items:<br><small>';
 
         const item = items[itemID];
